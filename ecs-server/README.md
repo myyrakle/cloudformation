@@ -15,7 +15,7 @@
 ## before
 
 1. docker 디렉터리에서 원하는 환경의 buildspec.yml과 Dockerfile, run.sh를 선택하고, 그것을 배포하고자 하는 프로젝트 github 루트 경로에 저장해서 push합니다.
-2. 서버에는 status code 200 응답을 반환하는 /health API가 존재해야 합니다.
+2. 서버에는 status code 200 응답을 반환하는 health check API가 존재해야 합니다.
 3. 서버는 프로덕션 버전에서 80 포트로 실행되어야 합니다.
 
 ## parameter
@@ -28,6 +28,9 @@
 6. Subnet1: 가용영역 설정을 위한 서브넷입니다.
 7. Subnet2: 가용영역 설정을 위한 서브넷입니다.
 8. VPC: ECS 서비스에 설정할 VPC입니다.
+9. EntryPoint: Docker Container의 EntryPoint입니다.
+10. HealthCheckPath: health check API의 URI 경로입니다.
+11. BuildSpecPath: CodeBuild에 사용될 buildspec 파일의 프로젝트 내 경로입니다.
 
 ## info
 
