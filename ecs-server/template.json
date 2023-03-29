@@ -42,6 +42,18 @@
     "CertificateArn": {
       "Type": "String",
       "Description": "ACM Arn for SSL (e.g: arn:aws:acm:ap-northeast-2:210706881319:certificate/6a0b3a8b-bcb1-491d-a814-078739105983)"
+    },
+    "AdditionalSecurityGroups": {
+      "Type": "CommaDelimitedList",
+      "Description": "(Optional) Additional Security Group List (e.g: \"sg-0e37017d05458fc35\", \"sg-0ac6bad71a9fb37d9\")"
+    },
+    "EntryPoint": {
+      "Type": "CommaDelimitedList",
+      "Description": "(Optional) Docker Run Entrypoint (e.g: \"sh\", \"run.sh\")"
+    },
+    "HealthCheckPath": {
+      "Type": "String",
+      "Description": "(Optional) Health Check API Path (e.g: \"/api/health\")"
     }
   },
   "Rules": {},
@@ -175,7 +187,7 @@
       "Properties": {
         "HealthCheckEnabled": true,
         "HealthCheckIntervalSeconds": 30,
-        "HealthCheckPath": "/health",
+        "HealthCheckPath": "/api/v2/health",
         "HealthCheckPort": "80",
         "HealthCheckProtocol": "HTTP",
         "HealthCheckTimeoutSeconds": 20,
@@ -523,7 +535,9 @@
             "SecurityGroups": [
               {
                 "Ref": "ECSServicesSecurityGroup"
-              }
+              },
+              "sg-0e37017d05458fc35",
+              "sg-0ac6bad71a9fb37d9"
             ]
           }
         },
@@ -615,7 +629,7 @@
         },
         "Environment": {
           "Type": "LINUX_CONTAINER",
-          "ComputeType": "BUILD_GENERAL1_SMALL",
+          "ComputeType": "BUILD_GENERAL1_MEDIUM",
           "Image": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
           "PrivilegedMode": "true",
           "EnvironmentVariables": [
@@ -653,9 +667,10 @@
           "Location": {
             "Fn::Sub": "${ArtifactBucket}/source.zip"
           },
+          "BuildSpec": "./setup/master/buildspec.yml",
           "Type": "S3"
         },
-        "TimeoutInMinutes": 10
+        "TimeoutInMinutes": 20
       },
       "DependsOn": ["CodeBuildRole", "ArtifactBucket", "ECR"]
     },
