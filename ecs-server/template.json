@@ -43,10 +43,6 @@
       "Type": "String",
       "Description": "ACM Arn for SSL (e.g: arn:aws:acm:ap-northeast-2:210706881319:certificate/6a0b3a8b-bcb1-491d-a814-078739105983)"
     },
-    "AdditionalSecurityGroups": {
-      "Type": "CommaDelimitedList",
-      "Description": "Additional Security Group List (e.g: \"sg-0e37017d05458fc35\", \"sg-0ac6bad71a9fb37d9\")"
-    },
     "EntryPoint": {
       "Type": "CommaDelimitedList",
       "Description": "Docker Run Entrypoint (e.g: \"sh\", \"run.sh\")"
@@ -54,6 +50,10 @@
     "HealthCheckPath": {
       "Type": "String",
       "Description": "Health Check API Path (e.g: \"/api/health\")"
+    },
+    "BuildSpecPath": {
+      "Type": "String",
+      "Description": "BuildSpec file path (e.g: \"/prod/buildspec.yml\")"
     }
   },
   "Rules": {},
@@ -536,21 +536,11 @@
                 "Ref": "Subnet2"
               }
             ],
-            "SecurityGroups": {
-              "Fn::Join": [
-                "",
-                [
-                  [
-                    {
-                      "Ref": "ECSServicesSecurityGroup"
-                    }
-                  ],
-                  {
-                    "Ref": "AdditionalSecurityGroups"
-                  }
-                ]
-              ]
-            }
+            "SecurityGroups": [
+              {
+                "Ref": "ECSServicesSecurityGroup"
+              }
+            ]
           }
         },
         "LoadBalancers": [
@@ -679,7 +669,9 @@
           "Location": {
             "Fn::Sub": "${ArtifactBucket}/source.zip"
           },
-          "BuildSpec": "./setup/master/buildspec.yml",
+          "BuildSpec": {
+            "Ref": "BuildSpecPath"
+          },
           "Type": "S3"
         },
         "TimeoutInMinutes": 20
