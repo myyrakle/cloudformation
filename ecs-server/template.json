@@ -175,7 +175,9 @@
                 "HostPort": 80
               }
             ],
-            "EntryPoint": ["sh", "run.sh"]
+            "EntryPoint": {
+              "Ref": "EntryPoint"
+            }
           }
         ],
         "Memory": 2048,
