@@ -1,3 +1,4 @@
+# 원본 이미지 레포지토리는 AWS ECR을 사용하는 것을 권장함. (docker hub pull의 limit rate issue)
 FROM ubuntu
 RUN apt-get update -y
 RUN apt-get install -y curl 
@@ -10,5 +11,4 @@ WORKDIR /home/server
 RUN npm i  
 RUN npm run build
 WORKDIR /home
-ENTRYPOINT ["run.sh"]
 EXPOSE 80
