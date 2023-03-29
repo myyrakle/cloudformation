@@ -45,15 +45,15 @@
     },
     "AdditionalSecurityGroups": {
       "Type": "CommaDelimitedList",
-      "Description": "(Optional) Additional Security Group List (e.g: \"sg-0e37017d05458fc35\", \"sg-0ac6bad71a9fb37d9\")"
+      "Description": "Additional Security Group List (e.g: \"sg-0e37017d05458fc35\", \"sg-0ac6bad71a9fb37d9\")"
     },
     "EntryPoint": {
       "Type": "CommaDelimitedList",
-      "Description": "(Optional) Docker Run Entrypoint (e.g: \"sh\", \"run.sh\")"
+      "Description": "Docker Run Entrypoint (e.g: \"sh\", \"run.sh\")"
     },
     "HealthCheckPath": {
       "Type": "String",
-      "Description": "(Optional) Health Check API Path (e.g: \"/api/health\")"
+      "Description": "Health Check API Path (e.g: \"/api/health\")"
     }
   },
   "Rules": {},
@@ -187,7 +187,9 @@
       "Properties": {
         "HealthCheckEnabled": true,
         "HealthCheckIntervalSeconds": 30,
-        "HealthCheckPath": "/api/v2/health",
+        "HealthCheckPath": {
+          "Ref": "HealthCheckPath"
+        },
         "HealthCheckPort": "80",
         "HealthCheckProtocol": "HTTP",
         "HealthCheckTimeoutSeconds": 20,
@@ -532,13 +534,21 @@
                 "Ref": "Subnet2"
               }
             ],
-            "SecurityGroups": [
-              {
-                "Ref": "ECSServicesSecurityGroup"
-              },
-              "sg-0e37017d05458fc35",
-              "sg-0ac6bad71a9fb37d9"
-            ]
+            "SecurityGroups": {
+              "Fn::Join": [
+                "",
+                [
+                  [
+                    {
+                      "Ref": "ECSServicesSecurityGroup"
+                    }
+                  ],
+                  {
+                    "Ref": "AdditionalSecurityGroups"
+                  }
+                ]
+              ]
+            }
           }
         },
         "LoadBalancers": [
