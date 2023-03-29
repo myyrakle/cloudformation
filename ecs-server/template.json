@@ -261,56 +261,46 @@
       },
       "DependsOn": ["ECSService", "ScalableTargetRole"]
     },
-    "ScalingUpPolicy": {
+    "CPUScalingPolicy": {
       "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
       "Properties": {
         "PolicyName": {
-          "Fn::Join": ["-", [{ "Ref": "ServerName" }, "scale-up"]]
+          "Fn::Join": ["-", [{ "Ref": "ServerName" }, "cpu-auto-scaling"]]
         },
-        "PolicyType": "StepScaling",
+        "PolicyType": "TargetTrackingScaling",
         "ScalingTargetId": { "Ref": "ScalableTarget" },
-        "StepScalingPolicyConfiguration": {
-          "AdjustmentType": "ChangeInCapacity",
-          "Cooldown": 60,
-          "MetricAggregationType": "Average",
-          "StepAdjustments": [
-            {
-              "MetricIntervalLowerBound": 0,
-              "MetricIntervalUpperBound": 100,
-              "ScalingAdjustment": 2
-            },
-            {
-              "MetricIntervalLowerBound": 100,
-              "ScalingAdjustment": 4
-            }
-          ]
+        "ServiceNamespace": "ecs",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+          },
+          "TargetValue": 70.0,
+          "ScaleOutCooldown": 300,
+          "ScaleInCooldown": 300,
+          "DisableScaleIn": false
         }
       },
       "DependsOn": ["ScalableTarget"]
     },
-    "ScalingDownPolicy": {
+    "MemoryScalingPolicy": {
       "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
       "Properties": {
         "PolicyName": {
-          "Fn::Join": ["-", [{ "Ref": "ServerName" }, "scale-down"]]
+          "Fn::Join": ["-", [{ "Ref": "ServerName" }, "memory-auto-scaling"]]
         },
-        "PolicyType": "StepScaling",
+        "PolicyType": "TargetTrackingScaling",
         "ScalingTargetId": { "Ref": "ScalableTarget" },
-        "StepScalingPolicyConfiguration": {
-          "AdjustmentType": "ChangeInCapacity",
-          "Cooldown": 60,
-          "MetricAggregationType": "Average",
-          "StepAdjustments": [
-            {
-              "MetricIntervalLowerBound": -100,
-              "MetricIntervalUpperBound": -1,
-              "ScalingAdjustment": -1
-            },
-            {
-              "MetricIntervalUpperBound": -100,
-              "ScalingAdjustment": -2
-            }
-          ]
+        "ServiceNamespace": "ecs",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageMemoryUtilization"
+          },
+          "TargetValue": 70.0,
+          "ScaleOutCooldown": 300,
+          "ScaleInCooldown": 300,
+          "DisableScaleIn": false
         }
       },
       "DependsOn": ["ScalableTarget"]
